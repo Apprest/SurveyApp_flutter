@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'customer_home_page.dart';
 
-
 class CustomerLoginScreen extends StatefulWidget {
   const CustomerLoginScreen({super.key});
 
@@ -14,27 +13,23 @@ class CustomerLoginScreen extends StatefulWidget {
 class _CustomerLoginScreenState extends State<CustomerLoginScreen> {
   final TextEditingController controller = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String? _errorMessage;
+  final RxString errorMessage = ''.obs;
 
   void _handleLogin() {
-    final input = controller.text.trim();
+    if (_formKey.currentState!.validate()) {
+      final input = controller.text.trim();
 
-    if (input.isEmpty) {
-      setState(() {
-        _errorMessage = "Please enter your phone number";
-      });
-      return;
+      // Navigate with a smooth transition and pass the controller
+      Get.off(
+            () => const CHomePage(),
+        arguments: input,
+        transition: Transition.fadeIn,
+        duration: const Duration(milliseconds: 500),
+      );
+    } else {
+      errorMessage.value = "Please correct the errors above";
     }
-
-    // Navigate with a smooth transition and pass the controller
-    Get.off(
-          () => const CHomePage(),
-      arguments: input,
-      transition: Transition.fadeIn,
-      duration: const Duration(milliseconds: 500),
-    );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -46,12 +41,6 @@ class _CustomerLoginScreenState extends State<CustomerLoginScreen> {
         ),
         backgroundColor: Colors.orangeAccent,
         centerTitle: true,
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.logout),
-        //     onPressed: _logout,
-        //   ),
-        // ],
       ),
       backgroundColor: Colors.white,
       body: Padding(
@@ -64,7 +53,7 @@ class _CustomerLoginScreenState extends State<CustomerLoginScreen> {
               children: [
                 const Text("Login", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
-                TextFormField(
+                Obx(() => TextFormField(
                   controller: controller,
                   keyboardType: TextInputType.phone,
                   maxLength: 11,
@@ -80,15 +69,19 @@ class _CustomerLoginScreenState extends State<CustomerLoginScreen> {
                     focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.orange, width: 2.5),
                     ),
-                    errorText: _errorMessage,
+                    errorText: errorMessage.value.isEmpty ? null : errorMessage.value,
                   ),
                   validator: (value) {
-                    if (value == null || value.isEmpty || value.length != 11) {
-                      return 'Please enter a valid 11-digit phone number';
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your phone number';
+                    }
+                    final regex = RegExp(r'^01\d{9}$');
+                    if (!regex.hasMatch(value)) {
+                      return 'Enter a valid phone number starting with 01';
                     }
                     return null;
                   },
-                ),
+                )),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _handleLogin,

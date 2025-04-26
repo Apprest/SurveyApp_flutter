@@ -1,5 +1,6 @@
 import 'package:combined_view/Vendor/reviews.dart';
 import 'package:combined_view/user_selection.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'customer_home_page.dart';
@@ -42,6 +43,7 @@ class ProductCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
+                overflow: TextOverflow.ellipsis,
                 product.itemName,
                 style: const TextStyle(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,

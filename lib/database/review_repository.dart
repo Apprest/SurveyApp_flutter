@@ -27,4 +27,8 @@ class ReviewRepository {
   Future<void> deleteReview(String userPhone,String review) async {
     await reviewDao.deleteReview(userPhone, review);
   }
+
+  Future<void> deleteReviewsWithNullPhone() async {
+    await reviewDao.deleteReviewsWithNullPhone();
+  }
 }

@@ -1,4 +1,3 @@
-import 'package:combined_view/customer/customer_home_page.dart';
 import 'package:combined_view/customer/product_model.dart';
 import 'package:combined_view/main.dart';
 import 'package:flutter/material.dart';
@@ -19,9 +18,9 @@ class Reviews extends StatefulWidget {
 
 class _ReviewsState extends State<Reviews> {
   var reviews = <Review>[].obs;
+  var averageRate = 0.0.obs;
+  var reviewsCount = 0.obs;
   late ReviewRepository reviewRepository;
-  double averageRate = 0.0;
-  int reviewsCount=0;
 
   @override
   void initState() {
@@ -31,16 +30,16 @@ class _ReviewsState extends State<Reviews> {
   }
 
   Future<void> loadReview() async {
-    final result = await reviewRepository.getReviewsByMealName(widget.product.itemName);
-    double averageRate = 0;
-    reviewsCount = result.length;
-
-    for (var r in result) {
-        averageRate += r.rating;
-    }
-    averageRate = averageRate / reviewsCount;
-
+    final result = await reviewRepository.getReviewsByMealName(
+      widget.product.itemName,
+    );
     reviews.value = result;
+    reviewsCount.value = result.length;
+    averageRate.value =
+        result.isEmpty
+            ? 0.0
+            : result.map((e) => e.rating).reduce((a, b) => a + b) /
+                result.length;
   }
 
   @override
@@ -60,7 +59,7 @@ class _ReviewsState extends State<Reviews> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(10.0),
               width: double.infinity,
               child: Image.network(
                 widget.product.image,
@@ -70,7 +69,7 @@ class _ReviewsState extends State<Reviews> {
                   return Container(
                     height: 250,
                     color: Colors.grey[300],
-                    child: Icon(
+                    child: const Icon(
                       Icons.broken_image,
                       size: 100,
                       color: Colors.grey,
@@ -82,83 +81,98 @@ class _ReviewsState extends State<Reviews> {
             const SizedBox(height: 10),
             Text(
               widget.product.itemName,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
-            Text("Average Rate\t\t ($reviewsCount)",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),
+            Obx(() => Text(
+              "Total Rates\t\t (${reviewsCount.value})",
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            )),
             const SizedBox(height: 10),
-            Row(
+            Obx(() => Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment:CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                RatingBarIndicator (
-                  rating: averageRate,
+                RatingBarIndicator(
+                  rating: averageRate.value,
                   direction: Axis.horizontal,
                   itemCount: 5,
                   itemSize: 40,
-                  itemBuilder: (context, index) =>
-                      Icon(Icons.star, color: Colors.amber),
+                  itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
-                  "(${averageRate.toStringAsFixed(1)}/5)", // عرض الرقم كـ Double
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  "(${averageRate.value.toStringAsFixed(1)}/5)",
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ],
-            ),
+            )),
             Expanded(
               child: Obx(() {
                 return reviews.isEmpty
-                    ? Center(child: Text('No reviews yet.'))
+                    ? const Center(child: Text('No reviews yet.',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.black,),))
                     : ListView.builder(
                   itemCount: reviews.length,
                   itemBuilder: (ctx, index) {
                     final review = reviews[index];
                     return Card(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.person,
-                          color: Colors.orange,
-                        ),
-                        title: ReadMoreText(
-                          'Review: ${review.review}',
-                          trimLines: 2,
-                          colorClickableText: Colors.orange,
-                          trimMode: TrimMode.Line,
-                          trimCollapsedText: 'Read more',
-                          trimExpandedText: 'Read less',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        subtitle: Text(
-                          'By: ${review.customerName ?? "Anonymous"}\nPhone: ${review.customerPhone}',
-                        ),
-                        // isThreeLine: true,
-                        trailing: Column(
-                          mainAxisSize: MainAxisSize.max,
+                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // TextButton(
-                            //   onPressed: () async {
-                            //     await deleteReview(userPhone, review.review);
-                            //     await loadReview();
-                            //     ScaffoldMessenger.of(context).showSnackBar(
-                            //       SnackBar(content: Text('Review deleted')),
-                            //     );
-                            //   },
-                            //   child: Text(
-                            //     "Delete",
-                            //     style: TextStyle(color: Colors.red, fontSize: 16),
-                            //   ),
-                            // ),
-                            Icon(Icons.star, color: Colors.orange),
-                            Text(review.rating.toString()),
+                            Icon(
+                              Icons.person,
+                              color: Colors.orange,
+                              size: 40,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ReadMoreText(
+                                    'Review: ${review.review}',
+                                    trimLines: 2,
+                                    colorClickableText: Colors.orange,
+                                    trimMode: TrimMode.Line,
+                                    trimCollapsedText: 'Read more',
+                                    trimExpandedText: 'Read less',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'By: ${review.customerName ?? "Anonymous"}\nPhone: ${review.customerPhone}',
+                                    style: TextStyle(color: Colors.grey[700]),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Column(
+                              children: [
+                                IconButton(
+                                  onPressed: () async {
+                                    if (review.customerPhone != null) {
+                                      await deleteReview(review.customerPhone!, review.review);
+                                    }
+                                  },
+                                  icon: Icon(Icons.delete, color: Colors.red),
+                                  iconSize: 24,
+                                ),
+                                Text(
+                                  review.rating.toString(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
-
                       ),
                     );
                   },
@@ -171,8 +185,20 @@ class _ReviewsState extends State<Reviews> {
     );
   }
 
-  Future<void> deleteReview(String phone ,String review) async {
-    await ReviewRepository(database.reviewDao)
-        .deleteReview(userPhone,review);
+  Future<void> deleteReview(String phone, String reviewText) async {
+    await reviewRepository.deleteReview(phone, reviewText);
+    await loadReview();
+    Get.snackbar(
+      "Deleted",
+      "Review has been deleted",
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
+      duration:Duration(seconds: 1),
+    );
+  }
+  Future<void> deleteReviewsWithNullPhone() async {
+    await reviewRepository.deleteReviewsWithNullPhone();
+    await loadReview();
   }
 }

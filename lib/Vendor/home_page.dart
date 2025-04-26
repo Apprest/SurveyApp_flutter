@@ -79,23 +79,54 @@ class _HomePageState extends State<HomePage> {
           box.write("products", products);
           return Padding(
             padding: const EdgeInsets.all(8.0),
-            child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // عدد الأعمدة
-                crossAxisSpacing: 10, // المسافة بين الأعمدة
-                mainAxisSpacing: 10, // المسافة بين الصفوف
-                childAspectRatio: 0.75, // نسبة العرض إلى الارتفاع
-              ),
-              itemCount: products.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    // Get.to((context) => ReviewsPage(product: products[index]));
-                    Get.to((context)=> Reviews(product: products[index]));
-                  },
-                  child: ProductCard(product: products[index]),
-                );
-              },
+            child: Column(
+              children: [
+                // Row with 3 buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        // Handle button 1 action
+                      },
+                      child: Text('Button 1'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Handle button 2 action
+                      },
+                      child: Text('Button 2'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Handle button 3 action
+                      },
+                      child: Text('Button 3'),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10), // Space between Row and GridView
+                // The GridView.builder
+                Expanded(
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2, // عدد الأعمدة
+                      crossAxisSpacing: 10, // المسافة بين الأعمدة
+                      mainAxisSpacing: 10, // المسافة بين الصفوف
+                      childAspectRatio: 0.75, // نسبة العرض إلى الارتفاع
+                    ),
+                    itemCount: products.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          Get.to((context) => Reviews(product: products[index]));
+                        },
+                        child: ProductCard(product: products[index]),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           );
         },

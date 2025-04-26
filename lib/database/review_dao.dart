@@ -20,4 +20,7 @@ abstract class ReviewDAO {
 
   @Query('DELETE FROM reviews WHERE customerPhone = :phoneNumber AND review = :review')
   Future<void> deleteReview(String phoneNumber, String review);
+
+  @Query('DELETE FROM reviews WHERE customerPhone IS NULL')
+  Future<void> deleteReviewsWithNullPhone();
 }

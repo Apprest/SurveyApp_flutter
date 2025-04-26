@@ -181,6 +181,12 @@ class _$ReviewDAO extends ReviewDAO {
   }
 
   @override
+  Future<void> deleteReviewsWithNullPhone() async {
+    await _queryAdapter
+        .queryNoReturn('DELETE FROM reviews WHERE customerPhone IS NULL');
+  }
+
+  @override
   Future<void> insertReview(Review review) async {
     await _reviewInsertionAdapter.insert(review, OnConflictStrategy.abort);
   }

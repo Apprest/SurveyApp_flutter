@@ -100,9 +100,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   final review = Review(customerPhone: userPhone, review: controller.text, mealName: widget.product.itemName, rating: rating);
                   await database.reviewDao.insertReview(review);
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    backgroundColor: Colors.orangeAccent,
                       content: Text(
-                          "Thank You For Your Rating \n You rated ${widget.product.itemName} with $rating stars!")));
-                  Future.delayed(Duration(seconds: 1), () {
+                          "Thank You For Your Rating \n You rated ${widget.product.itemName} with $rating stars!"),),snackBarAnimationStyle: AnimationStyle());
+                  Future.delayed(Duration(seconds: 2), () {
                     Get.back(result: review);
                   });
                 },
