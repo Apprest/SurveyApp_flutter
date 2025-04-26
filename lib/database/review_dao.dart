@@ -14,4 +14,10 @@ abstract class ReviewDAO {
 
   @insert
   Future<void> insertReviews(List<Review> reviews);
+
+  @Query('UPDATE reviews SET customerName = :customerName WHERE customerPhone = :customerPhone')
+  Future<void> updateReview(String customerName, String customerPhone);
+
+  @Query('DELETE FROM reviews WHERE customerPhone = :phoneNumber AND review = :review')
+  Future<void> deleteReview(String phoneNumber, String review);
 }

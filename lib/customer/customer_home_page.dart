@@ -1,8 +1,8 @@
-import 'package:combined_view/database/review.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-
+import 'package:combined_view/database/review_repository.dart';
+import '../main.dart';
 import '../user_selection.dart';
 import 'api_service.dart';
 import 'product_card.dart';
@@ -42,7 +42,7 @@ class _CHomePageState extends State<CHomePage> {
             IconButton(
               icon: Icon(Icons.logout),
               onPressed: () {
-                showLogoutDialog(); // ✅ صححنا هنا كمان
+                showLogoutDialog();
               },
             ),
           ],
@@ -122,8 +122,10 @@ class _CHomePageState extends State<CHomePage> {
       textConfirm: "Yes",
       confirmTextColor: Colors.white,
       onCancel: () {},
-      onConfirm: () {
+      onConfirm: () async {
         if (userNameInput.isNotEmpty) {
+          await ReviewRepository(database.reviewDao)
+              .updateReview(userNameInput,userPhone);
           box.write('welcomeMessage', "Welcome $userNameInput");
         } else {
           box.write('welcomeMessage', "Welcome Sir");
@@ -132,4 +134,5 @@ class _CHomePageState extends State<CHomePage> {
       },
     );
   }
+
 }

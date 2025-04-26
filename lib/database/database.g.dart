@@ -96,7 +96,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `reviews` (`reviewID` INTEGER PRIMARY KEY AUTOINCREMENT, `customerName` TEXT, `customerPhone` TEXT, `review` TEXT NOT NULL, `mealName` TEXT NOT NULL, `rating` REAL)');
+            'CREATE TABLE IF NOT EXISTS `reviews` (`reviewID` INTEGER PRIMARY KEY AUTOINCREMENT, `customerName` TEXT, `customerPhone` TEXT, `review` TEXT NOT NULL, `mealName` TEXT NOT NULL, `rating` REAL NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -144,7 +144,7 @@ class _$ReviewDAO extends ReviewDAO {
             customerPhone: row['customerPhone'] as String?,
             review: row['review'] as String,
             mealName: row['mealName'] as String,
-            rating: row['rating'] as double?),
+            rating: row['rating'] as double),
         arguments: [mealName]);
   }
 
@@ -157,7 +157,27 @@ class _$ReviewDAO extends ReviewDAO {
             customerPhone: row['customerPhone'] as String?,
             review: row['review'] as String,
             mealName: row['mealName'] as String,
-            rating: row['rating'] as double?));
+            rating: row['rating'] as double));
+  }
+
+  @override
+  Future<void> updateReview(
+    String customerName,
+    String customerPhone,
+  ) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE reviews SET customerName = ?1 WHERE customerPhone = ?2',
+        arguments: [customerName, customerPhone]);
+  }
+
+  @override
+  Future<void> deleteReview(
+    String phoneNumber,
+    String review,
+  ) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM reviews WHERE customerPhone = ?1 AND review = ?2',
+        arguments: [phoneNumber, review]);
   }
 
   @override

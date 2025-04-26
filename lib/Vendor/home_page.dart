@@ -1,4 +1,6 @@
 import 'package:combined_view/Vendor/reviews.dart';
+import 'package:combined_view/database/review.dart';
+import 'package:combined_view/database/review_repository.dart';
 import 'package:combined_view/user_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,6 +8,7 @@ import 'package:get_storage/get_storage.dart';
 import '../customer/product_model.dart';
 import '../customer/api_service.dart';
 import '../customer/product_card.dart';
+import '../main.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -18,21 +21,21 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final box = GetStorage();
-  var welcomeMessage = Get.arguments ?? "Welcome Sir";
+  final welcomeMessage = "Dashboard";
   final apiService = ApiService();
-  // final userType =Get.arguments;
 
-  // var selectedUserType = "".obs;
 
   void _logout() async {
     box.remove('userType');
-    // userType=null;
-    // selectedUserType.value = "";
     box.write('isLoggedIn', false);
-    box.write('welcomeMessage', welcomeMessage);
+    // box.write('welcomeMessage', welcomeMessage);
     Get.offAll(() => UserSelectionScreen(), transition: Transition.fadeIn);
   }
+  Future<void> loadReviews() async {
+    final List<Review> allReviews = await ReviewRepository(database.reviewDao)
+        .getAllReviews();
 
+  }
 
   @override
   Widget build(BuildContext context) {

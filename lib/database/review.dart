@@ -8,7 +8,7 @@ class Review {
   final String? customerPhone;
   final String review;
   final String mealName;
-  final double? rating;
+  final double rating;
 
   Review({
     this.reviewID,

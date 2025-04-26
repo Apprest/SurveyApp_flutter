@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
-import '../database/database_helper.dart';
 import 'product_model.dart';
-import 'package:sqflite/sqflite.dart';
 
 class ApiService {
   static const String apiUrl = "https://560057.youcanlearnit.net/services/json/itemsfeed.php";
