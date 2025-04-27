@@ -31,11 +31,6 @@ class _HomePageState extends State<HomePage> {
     // box.write('welcomeMessage', welcomeMessage);
     Get.offAll(() => UserSelectionScreen(), transition: Transition.fadeIn);
   }
-  Future<void> loadReviews() async {
-    final List<Review> allReviews = await ReviewRepository(database.reviewDao)
-        .getAllReviews();
-
-  }
 
   @override
   Widget build(BuildContext context) {
