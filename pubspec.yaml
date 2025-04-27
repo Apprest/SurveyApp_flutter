@@ -46,6 +46,7 @@ dependencies:
   cached_network_image: ^3.3.1
   flutter_native_splash: ^2.4.6
   readmore: ^3.0.0
+  flutter_launcher_icons: ^0.14.3
 
 dev_dependencies:
   flutter_test:
@@ -54,12 +55,24 @@ dev_dependencies:
   floor_generator: ^1.4.2
   build_runner: ^2.1.2
 
+  flutter_lints: ^5.0.0
+flutter_launcher_icons:
+  android: true
+  image_path: "assets/icon/Icon.jpg"
+
+flutter_native_splash:
+#  color: "#ffffff"
+  background_image: assets/splash/splash1.png
+#  image: assets/splash/splash1.png
+  android: true
+  fullscreen: true
+
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^5.0.0
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
